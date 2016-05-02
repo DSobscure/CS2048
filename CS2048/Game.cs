@@ -14,16 +14,17 @@ namespace CS2048
         {
             get
             {
-                bool result = false;
-                for(int i = (int)Direction.Up; i < (int)Direction.Right; i++)
-                {
-                    if()
-                }
+                return false;
+                //bool result = false;
+                //for(int i = (int)Direction.Up; i < (int)Direction.Right; i++)
+                //{
+                //    if()
+                //}
             }
         }
         public bool MoveCheck(Direction direction)
         {
-
+            return false;
         }
         public bool Move(Direction direction, out double reward)
         {
