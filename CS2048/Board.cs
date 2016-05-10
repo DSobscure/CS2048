@@ -8,23 +8,7 @@ namespace CS2048
 {
     public class Board
     {
-        struct RowShiftInfo
-        {
-            public ushort row;
-            public int reward;
-        }
-        struct ColumnShiftInfo
-        {
-            public ulong column;
-            public int reward;
-        }
-        static RowShiftInfo[] RowShiftLeftTable = new RowShiftInfo[65536];
-        static RowShiftInfo[] RowShiftRightTable = new RowShiftInfo[65536];
-        static ColumnShiftInfo[] ColumnShiftUpTable = new ColumnShiftInfo[65536];
-        static ColumnShiftInfo[] ColumnShiftDownTable = new ColumnShiftInfo[65536];
-
         public ulong blocks;
-        public int score;
         public int EmptyCount
         {
             get
@@ -44,79 +28,93 @@ namespace CS2048
         {
             get
             {
-                int reward;
-                for (int i = (int)Direction.Up; i < (int)Direction.Right; i++)
+                for (int i = (int)Direction.Up; i <= (int)Direction.Right; i++)
                 {
-                    if (blocks != Move((Direction)i, out reward))
+                    if (MoveCheck((Direction)i))
                         return true;
                 }
                 return false;
             }
         }
-
-        static Board()
+        public bool IsFull
         {
-            for (int row = 0; row < 65536; row++)
+            get
             {
-                int reward = 0;
-                int[] lines = 
-                    {
-                       (row >>  0) & 0xf,
-                       (row >>  4) & 0xf,
-                       (row >>  8) & 0xf,
-                       (row >> 12) & 0xf
-                    };
-                // execute a move to the left
-                for (int i = 0; i < 3; ++i)
+                for (int i = 0; i < 64; i += 4)
                 {
-                    int j;
-                    for (j = i + 1; j < 4; ++j)
+                    if (((blocks >> i) & 0xf) == 0)
                     {
-                        if (lines[j] != 0) break;
-                    }
-                    if (j == 4) break; // no more tiles to the right
-
-                    if (lines[i] == 0)
-                    {
-                        lines[i] = lines[j];
-                        lines[j] = 0;
-                        i--; // retry this entry
-                    }
-                    else if (lines[i] == lines[j])
-                    {
-                        if (lines[i] != 0xf)
-                        {
-                            /* Pretend that 32768 + 32768 = 32768 (representational limit). */
-                            lines[i]++;
-                        }
-                        lines[j] = 0;
-                        reward += 2 << (lines[i]-1);
+                        return false;
                     }
                 }
-
-                int result = (lines[0] << 0) |
-                             (lines[1] << 4) |
-                             (lines[2] << 8) |
-                             (lines[3] << 12);
-                int rev_result = ReverseRow(result);
-                int rev_row = ReverseRow(row);
-
-                RowShiftLeftTable[row] =new RowShiftInfo { row = (ushort)(row ^ result), reward = reward };
-                RowShiftRightTable[rev_row] = new RowShiftInfo { row = (ushort)(rev_row ^ rev_result), reward = reward };
-                ColumnShiftUpTable[row] = new ColumnShiftInfo { column = UnpackColumn(row) ^ UnpackColumn(result), reward = reward };
-                ColumnShiftDownTable[rev_row] = new ColumnShiftInfo { column = UnpackColumn(rev_row) ^ UnpackColumn(rev_result), reward = reward };
+                return true;
             }
         }
-        static public ushort ReverseRow(int row)
+        public int MaxTile
+        {
+            get
+            {
+                int maxTile = 0;
+                for (int i = 0; i < 64; i += 4)
+                {
+                    int val = (int)((blocks >> i) & 0xf);
+                    if (Tables.TileScoreTable[val] > maxTile)
+                    {
+                        maxTile = Tables.TileScoreTable[val];
+                    }
+                }
+                return maxTile;
+            }
+        }
+        public int DistinctTileCount
+        {
+            get
+            {
+                HashSet<int> tileSet = new HashSet<int>();
+                for (int i = 0; i < 64; i += 4)
+                {
+                    int val = (int)((blocks >> i) & 0xf);
+                    if (val != 0 && !tileSet.Contains(val))
+                    {
+                        tileSet.Add(val);
+                    }
+                }
+                return tileSet.Count;
+            }
+        }
+        public int RepeatedTileCount
+        {
+            get
+            {
+                HashSet<int> tileSet = new HashSet<int>();
+                int count = 0;
+                for (int i = 0; i < 64; i += 4)
+                {
+                    int val = (int)((blocks >> i) & 0xf);
+                    if (val != 0)
+                    {
+                        if(tileSet.Contains(val))
+                        {
+                            count++;
+                        }
+                        else
+                            tileSet.Add(val);
+                    }
+                }
+                return count;
+            }
+        }
+
+        public static ushort ReverseRow(int row)
         {
             return (ushort)((row >> 12) | ((row >> 4) & 0x00F0) | ((row << 4) & 0x0F00) | (row << 12));
         }
-        static public ulong UnpackColumn(int column)
+        public static ulong UnpackColumn(int column)
         {
             ulong tmp = (ulong)column;
             return (tmp | (tmp << 12) | (tmp << 24) | (tmp << 36)) & 0x000F000F000F000F;
         }
-        static public ulong Transpose(ulong board)
+        public static ulong Transpose(ulong board)
         {
             ulong result;
             ulong diagonal4x4block = board & 0xFF00FF0000FF00FF;
@@ -132,15 +130,69 @@ namespace CS2048
             result = diagonalNet | (upperSparse4corner >> 12) | (lowerSparse4corner << 12);
             return result;
         }
+        public static double GetScore(ulong board)
+        {
+            double score = 0;
+            for (int i = 0; i < 4; i++)
+            {
+                score += Tables.LineScoreTable[GetRow(board, 3 - i),i];
+            }
+            return score;
+        }
+        public static ushort GetRow(ulong board, int rowIndex)
+        {
+            switch (rowIndex)
+            {
+                case 0:
+                    return (ushort)((board >> 48) & 0xFFFF);
+                case 1:
+                    return (ushort)((board >> 32) & 0xFFFF);
+                case 2:
+                    return (ushort)((board >> 16) & 0xFFFF);
+                case 3:
+                    return (ushort)((board) & 0xFFFF);
+            }
+            return (ushort)((board) & 0xFFFF);
+        }
+        public static ushort GetColumn(ulong board, int columnIndex)
+        {
+            ulong columnMask = (0xf000f000f000f000 >> (columnIndex * 4));
 
+            board = (board & columnMask) << 4 * columnIndex;
+            return (ushort)(GetRow(board, 0) | (GetRow(board, 1) >> 4) | (GetRow(board, 2) >> 8) | (GetRow(board, 3) >> 12));
+        }
+        public static ulong SetRows(ushort[] rows)
+        {
+            ulong result = 0;
+            result |= (ulong)rows[0] << 48;
+            result |= (ulong)rows[1] << 32;
+            result |= (ulong)rows[2] << 16;
+            result |= rows[3];
+            return result;
+        }
+        public static ulong SetColumns(ushort[] columns)
+        {
+            return Transpose(SetRows(columns));
+        }
+
+        public Board()
+        {
+
+        }
+        public Board(ulong blocks)
+        {
+            this.blocks = blocks;
+        }
         public void Print()
         {
-            Console.WriteLine(score);
             for(int i = 0; i < 4; i++)
             {
                 for(int j = 0; j < 4; j++)
                 {
-                    Console.Write("\t{0}", (blocks>>(16*i+4*j))&0xf);
+                    if(((blocks >> (16 * i + 4 * j)) & 0xf) > 0)
+                        Console.Write("\t{0}", 1 << (int)((blocks>>(16*i+4*j))&0xf));
+                    else
+                        Console.Write("\t0");
                 }
                 Console.WriteLine();
             }
@@ -185,52 +237,69 @@ namespace CS2048
                 case Direction.Up:
                     ret = blocks;
                     t = Transpose(blocks);
-                    ret ^= ColumnShiftUpTable[(t >> 0) & 0xFFFF].column << 0;
-                    ret ^= ColumnShiftUpTable[(t >> 16) & 0xFFFF].column << 4;
-                    ret ^= ColumnShiftUpTable[(t >> 32) & 0xFFFF].column << 8;
-                    ret ^= ColumnShiftUpTable[(t >> 48) & 0xFFFF].column << 12;
-                    reward += ColumnShiftUpTable[(t >> 0) & 0xFFFF].reward;
-                    reward += ColumnShiftUpTable[(t >> 16) & 0xFFFF].reward;
-                    reward += ColumnShiftUpTable[(t >> 32) & 0xFFFF].reward;
-                    reward += ColumnShiftUpTable[(t >> 48) & 0xFFFF].reward;
+                    ret ^= Tables.ColumnShiftUpTable[(t >> 0) & 0xFFFF].column << 0;
+                    ret ^= Tables.ColumnShiftUpTable[(t >> 16) & 0xFFFF].column << 4;
+                    ret ^= Tables.ColumnShiftUpTable[(t >> 32) & 0xFFFF].column << 8;
+                    ret ^= Tables.ColumnShiftUpTable[(t >> 48) & 0xFFFF].column << 12;
+                    reward += Tables.ColumnShiftUpTable[(t >> 0) & 0xFFFF].reward;
+                    reward += Tables.ColumnShiftUpTable[(t >> 16) & 0xFFFF].reward;
+                    reward += Tables.ColumnShiftUpTable[(t >> 32) & 0xFFFF].reward;
+                    reward += Tables.ColumnShiftUpTable[(t >> 48) & 0xFFFF].reward;
                     return ret;
                 case Direction.Down:
                     ret = blocks;
                     t = Transpose(blocks);
-                    ret ^= ColumnShiftDownTable[(t >> 0) & 0xFFFF].column << 0;
-                    ret ^= ColumnShiftDownTable[(t >> 16) & 0xFFFF].column << 4;
-                    ret ^= ColumnShiftDownTable[(t >> 32) & 0xFFFF].column << 8;
-                    ret ^= ColumnShiftDownTable[(t >> 48) & 0xFFFF].column << 12;
-                    reward += ColumnShiftDownTable[(t >> 0) & 0xFFFF].reward;
-                    reward += ColumnShiftDownTable[(t >> 16) & 0xFFFF].reward;
-                    reward += ColumnShiftDownTable[(t >> 32) & 0xFFFF].reward;
-                    reward += ColumnShiftDownTable[(t >> 48) & 0xFFFF].reward;
+                    ret ^= Tables.ColumnShiftDownTable[(t >> 0) & 0xFFFF].column << 0;
+                    ret ^= Tables.ColumnShiftDownTable[(t >> 16) & 0xFFFF].column << 4;
+                    ret ^= Tables.ColumnShiftDownTable[(t >> 32) & 0xFFFF].column << 8;
+                    ret ^= Tables.ColumnShiftDownTable[(t >> 48) & 0xFFFF].column << 12;
+                    reward += Tables.ColumnShiftDownTable[(t >> 0) & 0xFFFF].reward;
+                    reward += Tables.ColumnShiftDownTable[(t >> 16) & 0xFFFF].reward;
+                    reward += Tables.ColumnShiftDownTable[(t >> 32) & 0xFFFF].reward;
+                    reward += Tables.ColumnShiftDownTable[(t >> 48) & 0xFFFF].reward;
                     return ret;
                 case Direction.Left:
                     ret = blocks;
-                    ret ^= ((ulong)(RowShiftLeftTable[(blocks >> 0) & 0xFFFF].row)) << 0;
-                    ret ^= ((ulong)(RowShiftLeftTable[(blocks >> 16) & 0xFFFF].row)) << 16;
-                    ret ^= ((ulong)(RowShiftLeftTable[(blocks >> 32) & 0xFFFF].row)) << 32;
-                    ret ^= ((ulong)(RowShiftLeftTable[(blocks >> 48) & 0xFFFF].row)) << 48;
-                    reward += RowShiftLeftTable[(blocks >> 0) & 0xFFFF].reward;
-                    reward += RowShiftLeftTable[(blocks >> 16) & 0xFFFF].reward;
-                    reward += RowShiftLeftTable[(blocks >> 32) & 0xFFFF].reward;
-                    reward += RowShiftLeftTable[(blocks >> 48) & 0xFFFF].reward;
+                    ret ^= ((ulong)(Tables.RowShiftLeftTable[(blocks >> 0) & 0xFFFF].row)) << 0;
+                    ret ^= ((ulong)(Tables.RowShiftLeftTable[(blocks >> 16) & 0xFFFF].row)) << 16;
+                    ret ^= ((ulong)(Tables.RowShiftLeftTable[(blocks >> 32) & 0xFFFF].row)) << 32;
+                    ret ^= ((ulong)(Tables.RowShiftLeftTable[(blocks >> 48) & 0xFFFF].row)) << 48;
+                    reward += Tables.RowShiftLeftTable[(blocks >> 0) & 0xFFFF].reward;
+                    reward += Tables.RowShiftLeftTable[(blocks >> 16) & 0xFFFF].reward;
+                    reward += Tables.RowShiftLeftTable[(blocks >> 32) & 0xFFFF].reward;
+                    reward += Tables.RowShiftLeftTable[(blocks >> 48) & 0xFFFF].reward;
                     return ret;
                 case Direction.Right:
                     ret = blocks;
-                    ret ^= ((ulong)(RowShiftRightTable[(blocks >> 0) & 0xFFFF].row)) << 0;
-                    ret ^= ((ulong)(RowShiftRightTable[(blocks >> 16) & 0xFFFF].row)) << 16;
-                    ret ^= ((ulong)(RowShiftRightTable[(blocks >> 32) & 0xFFFF].row)) << 32;
-                    ret ^= ((ulong)(RowShiftRightTable[(blocks >> 48) & 0xFFFF].row)) << 48;
-                    reward += RowShiftRightTable[(blocks >> 0) & 0xFFFF].reward;
-                    reward += RowShiftRightTable[(blocks >> 16) & 0xFFFF].reward;
-                    reward += RowShiftRightTable[(blocks >> 32) & 0xFFFF].reward;
-                    reward += RowShiftRightTable[(blocks >> 48) & 0xFFFF].reward;
+                    ret ^= ((ulong)(Tables.RowShiftRightTable[(blocks >> 0) & 0xFFFF].row)) << 0;
+                    ret ^= ((ulong)(Tables.RowShiftRightTable[(blocks >> 16) & 0xFFFF].row)) << 16;
+                    ret ^= ((ulong)(Tables.RowShiftRightTable[(blocks >> 32) & 0xFFFF].row)) << 32;
+                    ret ^= ((ulong)(Tables.RowShiftRightTable[(blocks >> 48) & 0xFFFF].row)) << 48;
+                    reward += Tables.RowShiftRightTable[(blocks >> 0) & 0xFFFF].reward;
+                    reward += Tables.RowShiftRightTable[(blocks >> 16) & 0xFFFF].reward;
+                    reward += Tables.RowShiftRightTable[(blocks >> 32) & 0xFFFF].reward;
+                    reward += Tables.RowShiftRightTable[(blocks >> 48) & 0xFFFF].reward;
                     return ret;
                 default:
                     return blocks;
             }
+        }
+        public bool MoveCheck(Direction direction)
+        {
+            int reward;
+            return blocks != Move(direction, out reward);
+        }
+        public int TileCount(int tile)
+        {
+            int result = 0;
+            for (int i = 0; i < 64; i += 4)
+            {
+                if (Tables.TileScoreTable[((blocks >> i) & 0xf)] == tile)
+                {
+                    result++;
+                }
+            }
+            return result;
         }
     }
 }

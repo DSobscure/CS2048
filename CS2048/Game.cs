@@ -8,28 +8,19 @@ namespace CS2048
 {
     public class Game
     {
-        public Board Board { get; private set; }
-        public int Score { get; private set; }
+        public Board board;
+        public int score;
         public bool IsEnd
         {
             get
             {
-                return false;
-                //bool result = false;
-                //for(int i = (int)Direction.Up; i < (int)Direction.Right; i++)
-                //{
-                //    if()
-                //}
+                return !board.CanMove;
             }
         }
-        public bool MoveCheck(Direction direction)
+        public Game()
         {
-            return false;
-        }
-        public bool Move(Direction direction, out double reward)
-        {
-            reward = 0;
-            return false;
+            board = new Board();
+            board.Initial();
         }
     }
 }
