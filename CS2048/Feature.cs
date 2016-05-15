@@ -15,15 +15,12 @@ namespace CS2048
         {
             for (int i = 0; i < 4; i++)
             {
-                for (int j = 0; j < 2; j++)
-                {
-                    int index = GetIndex(rotateBoards[i]);
-                    int symmetricIndex = GetIndex(GetMirrorSymmetricBoard(rotateBoards[i]));
+                int index = GetIndex(rotateBoards[i]);
+                int symmetricIndex = GetIndex(GetMirrorSymmetricBoard(rotateBoards[i]));
 
-                    tuples[index] += delta;
-                    if (symmetricIndex != index)
-                        tuples[symmetricIndex] += delta;
-                }
+                tuples[index] += delta;
+                if (symmetricIndex != index)
+                    tuples[symmetricIndex] += delta;
             }
         }
         public virtual double GetScore(ulong blocks)

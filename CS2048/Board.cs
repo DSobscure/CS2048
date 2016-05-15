@@ -301,5 +301,16 @@ namespace CS2048
             }
             return result;
         }
+        public int IndexOfTile(int tile)
+        {
+            for (int i = 0; i < 64; i += 4)
+            {
+                if (Tables.TileScoreTable[((blocks >> i) & 0xf)] == tile)
+                {
+                    return i / 4;
+                }
+            }
+            return -1;
+        }
     }
 }

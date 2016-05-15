@@ -108,7 +108,7 @@ namespace CS2048
                 int symmetricIndex = GetIndex(GetMirrorSymmetricBoard(rotateBoards[i]));
                 if(dictionaryTuple.ContainsKey(index))
                     sum += dictionaryTuple[index];
-                if (symmetricIndex != index && dictionaryTuple.ContainsKey(symmetricIndex))
+                if (/*symmetricIndex != index &&*/ dictionaryTuple.ContainsKey(symmetricIndex))
                     sum += dictionaryTuple[symmetricIndex];
             }
             return sum;
@@ -117,19 +117,16 @@ namespace CS2048
         {
             for (int i = 0; i < 4; i++)
             {
-                for (int j = 0; j < 2; j++)
-                {
-                    int index = GetIndex(rotateBoards[i]);
-                    int symmetricIndex = GetIndex(GetMirrorSymmetricBoard(rotateBoards[i]));
-                    if (dictionaryTuple.ContainsKey(index))
-                        dictionaryTuple[index] += delta;
-                    else
-                        dictionaryTuple.Add(index, delta);
-                    if (symmetricIndex != index && dictionaryTuple.ContainsKey(symmetricIndex))
-                        dictionaryTuple[symmetricIndex] += delta;
-                    else if(symmetricIndex != index)
-                        dictionaryTuple.Add(symmetricIndex, delta);
-                }
+                int index = GetIndex(rotateBoards[i]);
+                int symmetricIndex = GetIndex(GetMirrorSymmetricBoard(rotateBoards[i]));
+                if (dictionaryTuple.ContainsKey(index))
+                    dictionaryTuple[index] += delta;
+                else
+                    dictionaryTuple.Add(index, delta);
+                if (/*symmetricIndex != index &&*/ dictionaryTuple.ContainsKey(symmetricIndex))
+                    dictionaryTuple[symmetricIndex] += delta;
+                else if (symmetricIndex != index)
+                    dictionaryTuple.Add(symmetricIndex, delta);
             }
         }
     }

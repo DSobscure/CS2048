@@ -32,14 +32,14 @@ namespace CS2048
             //featureSet.Add(new SpecialFeature(3));//6000
             //featureSet.Add(new SpecialFeature(4));//2500
             //featureSet.Add(new SpecialFeature(5));//4000
-            featureSet.Add(new SpecialFeature(6));//9500
+            //featureSet.Add(new SpecialFeature(6));//9500
             //featureSet.Add(new SpecialFeature(7));//4000
             //featureSet.Add(new SpecialFeature(8));//2400
             //featureSet.Add(new SpecialFeature(9));//5500
-            featureSet.Add(new SpecialFeature(10));//10500
+            //featureSet.Add(new SpecialFeature(10));//10500
             //featureSet.Add(new SpecialFeature(11));//3000
             //featureSet.Add(new SpecialFeature(12));//2500
-            featureSet.Add(new SpecialFeature(13));
+            //featureSet.Add(new SpecialFeature(13));
             //featureSet.Add(new DictionaryFeature(1));//8000 11000
             //featureSet.Add(new DictionaryFeature(2));//5000 10000
             //featureSet.Add(new DictionaryFeature(3));//6500 10500
@@ -48,9 +48,9 @@ namespace CS2048
             //featureSet.Add(new DictionaryFeature(6));//6000 10000
             //featureSet.Add(new DictionaryFeature(7));//good
             //featureSet.Add(new DictionaryFeature(8));//good
-            featureSet.Add(new DictionaryFeature(9));//
+            //featureSet.Add(new DictionaryFeature(9));//
             //featureSet.Add(new DictionaryFeature(10));//normal
-            featureSet.Add(new DictionaryFeature(11));//
+            //featureSet.Add(new DictionaryFeature(11));//
         }
         public double GetValue(ulong blocks)
         {
@@ -90,14 +90,14 @@ namespace CS2048
 		    rotateBoards[2] = Board.SetColumns(oRows);
 		    rotateBoards[3] = Board.SetRows(oReverseRows);
 		
-		    isomorphicBoards[0] = blocks;
-		    isomorphicBoards[1] = Board.SetRows(reverseRows);
-		    isomorphicBoards[2] = Board.SetRows(oRows);
-		    isomorphicBoards[3] = Board.SetRows(oReverseRows);
-		    isomorphicBoards[4] = Board.SetColumns(rows);
-		    isomorphicBoards[5] = Board.SetColumns(reverseRows);
-		    isomorphicBoards[6] = Board.SetColumns(oRows);
-		    isomorphicBoards[7] = Board.SetColumns(oReverseRows);
+		    //isomorphicBoards[0] = blocks;
+		    //isomorphicBoards[1] = Board.SetRows(reverseRows);
+		    //isomorphicBoards[2] = Board.SetRows(oRows);
+		    //isomorphicBoards[3] = Board.SetRows(oReverseRows);
+		    //isomorphicBoards[4] = Board.SetColumns(rows);
+		    //isomorphicBoards[5] = Board.SetColumns(reverseRows);
+		    //isomorphicBoards[6] = Board.SetColumns(oRows);
+		    //isomorphicBoards[7] = Board.SetColumns(oReverseRows);
 		
 		    for(int i = 0; i<featureSet.Count; i++)
             {

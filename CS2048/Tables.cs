@@ -18,7 +18,7 @@ namespace CS2048
     }
     static public class Tables
     {
-        public static readonly double CommonRatio = 0.25;
+        public static readonly double CommonRatio = 0.05;
         public static double[] CommonRatioTable = new double[16];
         public static int[] TileScoreTable = new int[16];
         public static double[,] LineScoreTable = new double[65536, 4];
@@ -96,23 +96,31 @@ namespace CS2048
         }
         static void InitialCommonRatioTable()
         {
-            //CommonRatioTable[0] = 1;
-            //for (int i = 1; i < 16; i++)
-            //{
-            //    CommonRatioTable[i] = CommonRatioTable[i - 1] * CommonRatio;
-            //}
             CommonRatioTable[0] = 1;
-            for (int i = 1; i < 4; i++)
+            for (int i = 1; i < 16; i++)
             {
                 CommonRatioTable[i] = CommonRatioTable[i - 1] * CommonRatio;
             }
-            for (int i = 0; i < 4; i++)
-            {
-                for (int j = 1; j < 4; j++)
-                {
-                    CommonRatioTable[j*4+i] = CommonRatioTable[(j-1) * 4 + i] * CommonRatio;
-                }
-            }
+            //for(int j = 0; j < 4; j++)
+            //{
+            //    CommonRatioTable[j*4] = 1;
+            //    for (int i = 1; i < 4; i++)
+            //    {
+            //        CommonRatioTable[j * 4+i] = CommonRatioTable[j * 4 + i - 1] * CommonRatio;
+            //    }
+            //}
+            //CommonRatioTable[0] = 1;
+            //for (int i = 1; i < 4; i++)
+            //{
+            //    CommonRatioTable[i] = CommonRatioTable[i - 1] * CommonRatio;
+            //}
+            //for (int i = 0; i < 4; i++)
+            //{
+            //    for (int j = 1; j < 4; j++)
+            //    {
+            //        CommonRatioTable[j * 4 + i] = CommonRatioTable[(j - 1) * 4 + i] * CommonRatio;
+            //    }
+            //}
         }
         static void InitialTileScoreTable()
         {
@@ -134,22 +142,22 @@ namespace CS2048
                     blockNumbers[i] = ((number >> (4 * i)) & rowMask);
                 }
 
-                LineScoreTable[number, 0] = TileScoreTable[blockNumbers[0]] * CommonRatioTable[0]
-                    + TileScoreTable[blockNumbers[1]] * CommonRatioTable[1]
-                    + TileScoreTable[blockNumbers[2]] * CommonRatioTable[2]
+                LineScoreTable[number, 0] = TileScoreTable[blockNumbers[0]] * CommonRatioTable[0]/* * (3*blockNumbers[0] - blockNumbers[1] - blockNumbers[2] - blockNumbers[3])*/
+                    + TileScoreTable[blockNumbers[1]] * CommonRatioTable[1]/* * (2*blockNumbers[1] - blockNumbers[2] - blockNumbers[3])*/
+                    + TileScoreTable[blockNumbers[2]] * CommonRatioTable[2]/* * (blockNumbers[2] - blockNumbers[3])*/
                     + TileScoreTable[blockNumbers[3]] * CommonRatioTable[3];
-                LineScoreTable[number, 1] = TileScoreTable[blockNumbers[3]] * CommonRatioTable[4]
-                    + TileScoreTable[blockNumbers[2]] * CommonRatioTable[5]
-                    + TileScoreTable[blockNumbers[1]] * CommonRatioTable[6]
-                    + TileScoreTable[blockNumbers[0]] * CommonRatioTable[7];
-                LineScoreTable[number, 2] = TileScoreTable[blockNumbers[0]] * CommonRatioTable[8]
-                    + TileScoreTable[blockNumbers[1]] * CommonRatioTable[9]
-                    + TileScoreTable[blockNumbers[2]] * CommonRatioTable[10]
+                LineScoreTable[number, 1] = TileScoreTable[blockNumbers[0]] * CommonRatioTable[4]/* * (3 * blockNumbers[0] - blockNumbers[1] - blockNumbers[2] - blockNumbers[3])*/
+                    + TileScoreTable[blockNumbers[1]] * CommonRatioTable[5]// * (2 * blockNumbers[1] - blockNumbers[2] - blockNumbers[3])
+                    + TileScoreTable[blockNumbers[2]] * CommonRatioTable[6]// * (blockNumbers[2] - blockNumbers[3])
+                    + TileScoreTable[blockNumbers[3]] * CommonRatioTable[7];
+                LineScoreTable[number, 2] = TileScoreTable[blockNumbers[0]]* CommonRatioTable[8]// * (3 * blockNumbers[0] - blockNumbers[1] - blockNumbers[2] - blockNumbers[3])
+                    + TileScoreTable[blockNumbers[1]] * CommonRatioTable[9]// * (2 * blockNumbers[1] - blockNumbers[2] - blockNumbers[3])
+                    + TileScoreTable[blockNumbers[2]] * CommonRatioTable[10]// * (blockNumbers[2] - blockNumbers[3])
                     + TileScoreTable[blockNumbers[3]] * CommonRatioTable[11];
-                LineScoreTable[number, 3] = TileScoreTable[blockNumbers[3]] * CommonRatioTable[12]
-                    + TileScoreTable[blockNumbers[2]] * CommonRatioTable[13]
-                    + TileScoreTable[blockNumbers[1]] * CommonRatioTable[14]
-                    + TileScoreTable[blockNumbers[0]] * CommonRatioTable[15];
+                LineScoreTable[number, 3] = TileScoreTable[blockNumbers[0]] * CommonRatioTable[12]// * (3 * blockNumbers[0] - blockNumbers[1] - blockNumbers[2] - blockNumbers[3])
+                    + TileScoreTable[blockNumbers[1]] * CommonRatioTable[13]// * (2 * blockNumbers[1] - blockNumbers[2] - blockNumbers[3])
+                    + TileScoreTable[blockNumbers[2]] * CommonRatioTable[14]// * (blockNumbers[2] - blockNumbers[3])
+                    + TileScoreTable[blockNumbers[3]] * CommonRatioTable[15];
             }
         }
         static void InitialMinMaxScoreOfSumTable()

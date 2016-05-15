@@ -104,12 +104,17 @@ namespace CS2048
             winCount = 0;
             Board minBoard = new Board();
             Board maxBoard = new Board();
+            double totalSecond = 0;
+            int totalSteps = 0;
 
             for (int i = 1; i <= times; i++)
             {
                 int localMaxTile,localStep;
                 Board b;
+                DateTime startTime = DateTime.Now;
                 double result = PlayGame(out localMaxTile, out localStep, out b);
+                totalSecond += (DateTime.Now - startTime).TotalSeconds;
+                totalSteps += localStep;
                 avgScore += result;
 
                 if (result > maxScore)
@@ -153,6 +158,8 @@ namespace CS2048
                     Console.WriteLine("Max Tile: {0} #{1}", globalMaxTile, maxCount);
                     Console.WriteLine("Min Tile: {0} #{1}", globalMinTile, minCount);
                     Console.WriteLine();
+                    Console.WriteLine("Average Speed: {0}moves/sec",totalSteps/totalSecond);
+                    Console.WriteLine();
                     minBoard.Print();
                     maxBoard.Print();
                     avgScore = 0;
@@ -165,6 +172,8 @@ namespace CS2048
                     minCount = 0;
                     maxStep = 0;
                     minStep = 1000000;
+                    totalSecond = 0;
+                    totalSteps = 0;
                 }
                 if(i % 1000 == 0)
                 {
@@ -179,9 +188,9 @@ namespace CS2048
             double maxScore = -1000000.0;
             bool isFirst = true;
             int emptyCount = board.EmptyCount;
-            int maxDepth = 2;
-            if (board.MaxTile <= 2048)
-                maxDepth = 4;
+            int maxDepth = 0;
+            //if (board.MaxTile <= 2048)
+            //    maxDepth = 4;
             if (emptyCount < maxDepth)
             {
                 for (int i = 1; i <= 4; i++)
@@ -229,6 +238,9 @@ namespace CS2048
             for (int i = 1; i <= 4; i++)
             {
                 double result = Evaluate(board, (Direction)i);
+                //int indexOfMaxTile = board.IndexOfTile(board.MaxTile);
+                //if (indexOfMaxTile != 0 || indexOfMaxTile != 3 || indexOfMaxTile != 12 || indexOfMaxTile != 15)
+                //    result *= 0.5;
 
                 if (board.MoveCheck((Direction)i) && isFirst)
                 {
@@ -261,7 +273,8 @@ namespace CS2048
         public void UpdateEvaluation()
         {
             List<BestMoveNode> bestMoveNodes = new List<BestMoveNode>();
-
+            new Board(boardChain[boardChain.Count - 15].movedBlocks).Print();
+            Console.Read();
             for (int i = 0; i < boardChain.Count; i++)
             {
                 Board board = new Board(boardChain[i].addedBlocks);
@@ -281,7 +294,7 @@ namespace CS2048
             for (int i = boardChain.Count - 1; i >= 0; i--)
             {
 
-                int size = 5;
+                int size = 1;
                 double score = 0;
                 int totalReward = 0;
                 for (int j = 0; j < size && (i + j) < boardChain.Count; j++)
@@ -296,7 +309,7 @@ namespace CS2048
                     {
                         weight = Math.Pow(lambda, j * 1.0);
                     }
-
+                    weight = 1;
                     totalReward += bestMoveNodes[i].reward;
                     score += weight * (totalReward + tupleNetwork.GetValue(bestMoveNodes[i].movedBlocks));
                 }

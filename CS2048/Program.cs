@@ -10,32 +10,6 @@ namespace CS2048
     {
         static void Main(string[] args)
         {
-            //Board board = new Board();
-            //board.Initial();
-            //board.Print();
-            //while(board.CanMove)
-            //{
-            //    int reward = 0;
-            //    switch (Console.ReadLine())
-            //    {
-            //        case "w":
-            //            board.blocks = board.Move(Direction.Up, out reward);
-            //            break;
-            //        case "s":
-            //            board.blocks = board.Move(Direction.Down, out reward);
-            //            break;
-            //        case "a":
-            //            board.blocks = board.Move(Direction.Left, out reward);
-            //            break;
-            //        case "d":
-            //            board.blocks = board.Move(Direction.Right, out reward);
-            //            break;
-            //    }
-            //    board.score += reward;
-            //    board.InsertNewTile();
-            //    board.Print();
-            //    Console.WriteLine(Board.GetScore(board.blocks));
-            //}
             TDLearningAgent agent = new TDLearningAgent();
             //foreach (Feature f in agent.td.tupleNetwork.featureSet)
             //{
@@ -47,6 +21,14 @@ namespace CS2048
             //{
             //    Console.WriteLine("index: {0}   score:{1}", pair.Key, pair.Value);
             //}
+            //Console.WriteLine(Board.GetScore(0xfedc000000000000));
+            //Console.WriteLine(Board.GetScore(0xefdc000000000000));
+            //Console.WriteLine(Board.GetScore(0xefdc143214321432));
+            //Console.WriteLine(Board.GetScore(0xefdc111111111111));
+            //Console.WriteLine(Board.GetScore(0x000000000000fedc));
+            //Console.WriteLine(Board.GetScore(0x000000000000cdef));
+            //Console.WriteLine(Board.GetScore(0x000000000000cdfe));
+            //Console.WriteLine(Board.GetScore(0x0000000000001357));
             Console.Read();
         }
     }
