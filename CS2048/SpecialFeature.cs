@@ -13,7 +13,7 @@ namespace CS2048
         int index;
 
         [JsonConstructor]
-        public SpecialFeature(double[] tuples, int index) : base(tuples)
+        public SpecialFeature(float[] tuples, int index) : base(tuples)
         {
             this.index = index;
         }
@@ -31,15 +31,17 @@ namespace CS2048
                 case 10:
                 case 11:
                 case 12:
-                    tuples = new double[1048576];
+                    tuples = new float[1048576];
                     break;
                 case 4:
                 case 5:
                 case 7:
-                    tuples = new double[65536];
+                    tuples = new float[65536];
+                    break;
+                case 14:
+                    tuples = new float[16777216];
                     break;
             }
-            tuples = new double[1048576];
         }
 
         public override int GetIndex(ulong blocks)
@@ -124,9 +126,102 @@ namespace CS2048
                     //oxox
                     //xxxx
                     return (int)(((blocks >> 44) & 0xF0000) | ((blocks >> 40) & 0xF000) | ((blocks >> 32) & 0xF00) | ((blocks >> 24) & 0xF0) | ((blocks >> 20) & 0xF));
+                case 14:
+                    //oooo
+                    //ooxx
+                    //xxxx
+                    //xxxx
+                    return (int)(((blocks >> 40) & 0xF00000) | ((blocks >> 40) & 0xF0000) | ((blocks >> 40) & 0xF000) | ((blocks >> 40) & 0xF00) | ((blocks >> 40) & 0xF0) | ((blocks >> 40) & 0xF));
                 default:
                     return 0;
             }
         }
+    //    public override string Layout()
+    //    {
+    //        StringBuilder sb = new StringBuilder();
+    //        switch (index)
+    //        {
+    //            case 1:
+    //                sb.AppendLine("ooox");
+    //                sb.AppendLine("ooxx");
+    //                sb.AppendLine("xxxx");
+    //                sb.AppendLine("xxxx");
+    //                break;
+    //            case 2:
+    //                sb.AppendLine("xoox");
+    //                sb.AppendLine("ooxx");
+    //                sb.AppendLine("oxxx");
+    //                sb.AppendLine("xxxx");
+    //                break;
+    //            case 3:
+    //                sb.AppendLine("xxxx");
+    //                sb.AppendLine("xxoo");
+    //                sb.AppendLine("ooox");
+    //                sb.AppendLine("xxxx");
+    //                break;
+    //            case 4:
+    //                sb.AppendLine("oxxx");
+    //                sb.AppendLine("oxxx");
+    //                sb.AppendLine("oxxx");
+    //                sb.AppendLine("oxxx");
+    //                break;
+    //            case 5:
+    //                //ooox
+    //                //oxxx
+    //                //xxxx
+    //                //xxxx
+    //                return (int)(((blocks >> 48) & 0xF000) | ((blocks >> 48) & 0xF00) | ((blocks >> 48) & 0xF0) | ((blocks >> 44) & 0xF));
+    //            case 6:
+    //                //xxxo
+    //                //xxxo
+    //                //xooo
+    //                //xxxx
+    //                return (int)(((blocks >> 32) & 0xF0000) | ((blocks >> 20) & 0xF000) | ((blocks >> 16) & 0xF00) | ((blocks >> 16) & 0xF0) | ((blocks >> 16) & 0xF));
+    //            case 7:
+    //                //xxxx
+    //                //xxxx
+    //                //xxxo
+    //                //xooo
+    //                return (int)(((blocks >> 4) & 0xF000) | ((blocks >> 0) & 0xF00) | ((blocks >> 0) & 0xF0) | ((blocks >> 0) & 0xF));
+    //            case 8:
+    //                //oxoo
+    //                //xxxx
+    //                //ooxx
+    //                //xxxx
+    //                return (int)(((blocks >> 44) & 0xF0000) | ((blocks >> 40) & 0xF000) | ((blocks >> 40) & 0xF00) | ((blocks >> 24) & 0xF0) | ((blocks >> 24) & 0xF));
+    //            case 9:
+    //                //xxxx
+    //                //xoxx
+    //                //ooox
+    //                //xoxx
+    //                return (int)(((blocks >> 24) & 0xF0000) | ((blocks >> 16) & 0xF000) | ((blocks >> 16) & 0xF00) | ((blocks >> 16) & 0xF0) | ((blocks >> 8) & 0xF));
+    //            case 10:
+    //                //xxxx
+    //                //oxxx
+    //                //ooox
+    //                //oxxx
+    //                return (int)(((blocks >> 28) & 0xF0000) | ((blocks >> 16) & 0xF000) | ((blocks >> 16) & 0xF00) | ((blocks >> 16) & 0xF0) | ((blocks >> 12) & 0xF));
+    //            case 11:
+    //                //ooox
+    //                //oxxx
+    //                //oxxx
+    //                //xxxx
+    //                return (int)(((blocks >> 44) & 0xF0000) | ((blocks >> 44) & 0xF000) | ((blocks >> 44) & 0xF00) | ((blocks >> 40) & 0xF0) | ((blocks >> 28) & 0xF));
+    //            case 12:
+    //                //xoox
+    //                //oxxx
+    //                //oxxx
+    //                //oxxx
+    //                return (int)(((blocks >> 40) & 0xF0000) | ((blocks >> 40) & 0xF000) | ((blocks >> 36) & 0xF00) | ((blocks >> 24) & 0xF0) | ((blocks >> 12) & 0xF));
+    //            case 13:
+    //                //oxox
+    //                //xoxx
+    //                //oxox
+    //                //xxxx
+    //                return (int)(((blocks >> 44) & 0xF0000) | ((blocks >> 40) & 0xF000) | ((blocks >> 32) & 0xF00) | ((blocks >> 24) & 0xF0) | ((blocks >> 20) & 0xF));
+    //            default:
+    //                return 0;
+    //        }
+    //        return sb.ToString();
     }
 }

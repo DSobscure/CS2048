@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CS2048</RootNamespace>
     <AssemblyName>CS2048</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -49,7 +50,13 @@
     <Compile Include="DictionaryFeature.cs" />
     <Compile Include="Direction.cs" />
     <Compile Include="Feature.cs" />
+    <Compile Include="FiveTupleFeature.cs" />
+    <Compile Include="FourTupleFeature.cs" />
     <Compile Include="Game.cs" />
+    <Compile Include="MLP2048AI.cs" />
+    <Compile Include="NeuralNetworkLibrary\MultiLayerPerceptron.cs" />
+    <Compile Include="SevenTupleFeature.cs" />
+    <Compile Include="SixTupleFeature.cs" />
     <Compile Include="SpecialFeature.cs" />
     <Compile Include="LFeature.cs" />
     <Compile Include="LineFeture.cs" />

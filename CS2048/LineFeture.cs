@@ -12,7 +12,7 @@ namespace CS2048
 
         public LineFeature(int index)
         {
-            tuples = new double[65536];
+            tuples = new float[65536];
             this.index = index;
         }
 

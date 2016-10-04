@@ -12,7 +12,7 @@ namespace CS2048
 
         public TDLearningAgent()
         {
-            td = new TD(0.0025);
+            td = new TD(0.0025f);
         }
 
         public void Training(int trainingTimes)

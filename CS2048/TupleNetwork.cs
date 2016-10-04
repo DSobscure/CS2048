@@ -25,44 +25,34 @@ namespace CS2048
         public TupleNetwork()
         {
             featureSet = new List<Feature>();
+
+            featureSet.Add(new FourTupleFeature(3));
+            featureSet.Add(new FourTupleFeature(7));
+            featureSet.Add(new FiveTupleFeature(3));
+            featureSet.Add(new FiveTupleFeature(2));
+            featureSet.Add(new FiveTupleFeature(7));
+            featureSet.Add(new FiveTupleFeature(5));
+            featureSet.Add(new SixTupleFeature(2));
+            featureSet.Add(new SixTupleFeature(7));
+            featureSet.Add(new SixTupleFeature(3));
+            featureSet.Add(new SixTupleFeature(1));
+            featureSet.Add(new SixTupleFeature(6));
+            featureSet.Add(new SixTupleFeature(5));
+
             rotateBoards = new ulong[4];
             isomorphicBoards = new ulong[8];
-            featureSet.Add(new SpecialFeature(1));//9000
-            //featureSet.Add(new SpecialFeature(2));//3000
-            //featureSet.Add(new SpecialFeature(3));//6000
-            //featureSet.Add(new SpecialFeature(4));//2500
-            //featureSet.Add(new SpecialFeature(5));//4000
-            //featureSet.Add(new SpecialFeature(6));//9500
-            //featureSet.Add(new SpecialFeature(7));//4000
-            //featureSet.Add(new SpecialFeature(8));//2400
-            //featureSet.Add(new SpecialFeature(9));//5500
-            //featureSet.Add(new SpecialFeature(10));//10500
-            //featureSet.Add(new SpecialFeature(11));//3000
-            //featureSet.Add(new SpecialFeature(12));//2500
-            //featureSet.Add(new SpecialFeature(13));
-            //featureSet.Add(new DictionaryFeature(1));//8000 11000
-            //featureSet.Add(new DictionaryFeature(2));//5000 10000
-            //featureSet.Add(new DictionaryFeature(3));//6500 10500
-            //featureSet.Add(new DictionaryFeature(4));//4000 9000
-            //featureSet.Add(new DictionaryFeature(5));//6000 10000
-            //featureSet.Add(new DictionaryFeature(6));//6000 10000
-            //featureSet.Add(new DictionaryFeature(7));//good
-            //featureSet.Add(new DictionaryFeature(8));//good
-            //featureSet.Add(new DictionaryFeature(9));//
-            //featureSet.Add(new DictionaryFeature(10));//normal
-            //featureSet.Add(new DictionaryFeature(11));//
         }
-        public double GetValue(ulong blocks)
+        public float GetValue(ulong blocks)
         {
             SetSymmetricBoards(blocks);
-            double sum = 0;
+            float sum = 0;
             for (int i = 0; i < featureSet.Count; i++)
             {
                 sum += featureSet[i].GetScore(blocks);
             }
             return sum;
         }
-        public void UpdateValue(ulong blocks, double delta)
+        public void UpdateValue(ulong blocks, float delta)
         {
             SetSymmetricBoards(blocks);
             for (int i = 0; i < featureSet.Count; i++)
@@ -86,20 +76,20 @@ namespace CS2048
 		    }
 
             rotateBoards[0] = blocks;
-		    rotateBoards[1] = Board.SetColumns(reverseRows);
-		    rotateBoards[2] = Board.SetColumns(oRows);
-		    rotateBoards[3] = Board.SetRows(oReverseRows);
-		
-		    //isomorphicBoards[0] = blocks;
-		    //isomorphicBoards[1] = Board.SetRows(reverseRows);
-		    //isomorphicBoards[2] = Board.SetRows(oRows);
-		    //isomorphicBoards[3] = Board.SetRows(oReverseRows);
-		    //isomorphicBoards[4] = Board.SetColumns(rows);
-		    //isomorphicBoards[5] = Board.SetColumns(reverseRows);
-		    //isomorphicBoards[6] = Board.SetColumns(oRows);
-		    //isomorphicBoards[7] = Board.SetColumns(oReverseRows);
-		
-		    for(int i = 0; i<featureSet.Count; i++)
+            rotateBoards[1] = Board.SetColumns(reverseRows);
+            rotateBoards[2] = Board.SetColumns(oRows);
+            rotateBoards[3] = Board.SetRows(oReverseRows);
+
+            isomorphicBoards[0] = blocks;
+            isomorphicBoards[1] = Board.SetRows(reverseRows);
+            isomorphicBoards[2] = Board.SetRows(oRows);
+            isomorphicBoards[3] = Board.SetRows(oReverseRows);
+            isomorphicBoards[4] = Board.SetColumns(rows);
+            isomorphicBoards[5] = Board.SetColumns(reverseRows);
+            isomorphicBoards[6] = Board.SetColumns(oRows);
+            isomorphicBoards[7] = Board.SetColumns(oReverseRows);
+
+            for (int i = 0; i<featureSet.Count; i++)
             {
 		        featureSet[i].SetSymmetricBoards(rotateBoards, isomorphicBoards);
             }
@@ -120,9 +110,15 @@ namespace CS2048
                 {
                     string result = File.ReadAllText("data" + i.ToString());
                     if(featureSet[i] is SpecialFeature)
-                        featureSet.Add(JsonConvert.DeserializeObject<SpecialFeature>(result, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto }));
+                        featureSet[i] = (JsonConvert.DeserializeObject<SpecialFeature>(result, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto }));
                     else if(featureSet[i] is DictionaryFeature)
-                        featureSet.Add(JsonConvert.DeserializeObject<DictionaryFeature>(result, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto }));
+                        featureSet[i] = (JsonConvert.DeserializeObject<DictionaryFeature>(result, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto }));
+                    else if(featureSet[i] is FourTupleFeature)
+                        featureSet[i] = (JsonConvert.DeserializeObject<FourTupleFeature>(result, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto }));
+                    else if (featureSet[i] is FiveTupleFeature)
+                        featureSet[i] = (JsonConvert.DeserializeObject<FiveTupleFeature>(result, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto }));
+                    else if (featureSet[i] is SixTupleFeature)
+                        featureSet[i] = (JsonConvert.DeserializeObject<SixTupleFeature>(result, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto }));
                 }
             }
         }

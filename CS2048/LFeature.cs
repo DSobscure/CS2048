@@ -10,13 +10,13 @@ namespace CS2048
     public class LFeature : Feature
     {
         [JsonConstructor]
-        public LFeature(double[] tuples)
+        public LFeature(float[] tuples)
         {
             this.tuples = tuples;
         }
         public LFeature()
         {
-            tuples = new double[16];
+            tuples = new float[16];
         }
         public override int GetIndex(ulong blocks)
         {

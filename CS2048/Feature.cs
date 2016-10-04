@@ -10,8 +10,8 @@ namespace CS2048
     public abstract class Feature
     {
         [JsonProperty("tuples")]
-        public double[] tuples;
-        public virtual void UpdateScore(ulong blocks, double delta)
+        public float[] tuples;
+        public virtual void UpdateScore(ulong blocks, float delta)
         {
             for (int i = 0; i < 4; i++)
             {
@@ -23,9 +23,9 @@ namespace CS2048
                     tuples[symmetricIndex] += delta;
             }
         }
-        public virtual double GetScore(ulong blocks)
+        public virtual float GetScore(ulong blocks)
         {
-            double sum = 0;
+            float sum = 0;
             for (int i = 0; i < 4; i++)
             {
                 int index = GetIndex(rotateBoards[i]);
@@ -38,12 +38,13 @@ namespace CS2048
             return sum;
         }
         public abstract int GetIndex(ulong blocks);
+        //public abstract string Layout();
 
         public ulong[] rotateBoards;
         public ulong[] isomorphicBoards;
 
         [JsonConstructor]
-        public Feature(double[] tuples)
+        public Feature(float[] tuples)
         {
             this.tuples = tuples;
         }

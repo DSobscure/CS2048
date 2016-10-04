@@ -18,12 +18,12 @@ namespace CS2048
     }
     static public class Tables
     {
-        public static readonly double CommonRatio = 0.05;
-        public static double[] CommonRatioTable = new double[16];
+        public static readonly float CommonRatio = 1f;
+        public static float[] CommonRatioTable = new float[16];
         public static int[] TileScoreTable = new int[16];
-        public static double[,] LineScoreTable = new double[65536, 4];
-        public static double[] MaxScoreOfSumTable = new double[65536];
-        static double[] MinScoreOfSumTable = new double[65536];
+        public static float[,] LineScoreTable = new float[65536, 4];
+        public static float[] MaxScoreOfSumTable = new float[65536];
+        static float[] MinScoreOfSumTable = new float[65536];
         public static int[] RowSumTable = new int[65536];
         public static int[] Log2Table = new int[65536];
         public static RowShiftInfo[] RowShiftLeftTable = new RowShiftInfo[65536];
@@ -101,26 +101,6 @@ namespace CS2048
             {
                 CommonRatioTable[i] = CommonRatioTable[i - 1] * CommonRatio;
             }
-            //for(int j = 0; j < 4; j++)
-            //{
-            //    CommonRatioTable[j*4] = 1;
-            //    for (int i = 1; i < 4; i++)
-            //    {
-            //        CommonRatioTable[j * 4+i] = CommonRatioTable[j * 4 + i - 1] * CommonRatio;
-            //    }
-            //}
-            //CommonRatioTable[0] = 1;
-            //for (int i = 1; i < 4; i++)
-            //{
-            //    CommonRatioTable[i] = CommonRatioTable[i - 1] * CommonRatio;
-            //}
-            //for (int i = 0; i < 4; i++)
-            //{
-            //    for (int j = 1; j < 4; j++)
-            //    {
-            //        CommonRatioTable[j * 4 + i] = CommonRatioTable[(j - 1) * 4 + i] * CommonRatio;
-            //    }
-            //}
         }
         static void InitialTileScoreTable()
         {

@@ -130,9 +130,9 @@ namespace CS2048
             result = diagonalNet | (upperSparse4corner >> 12) | (lowerSparse4corner << 12);
             return result;
         }
-        public static double GetScore(ulong board)
+        public static float GetScore(ulong board)
         {
-            double score = 0;
+            float score = 0;
             for (int i = 0; i < 4; i++)
             {
                 score += Tables.LineScoreTable[GetRow(board, 3 - i),i];
@@ -311,6 +311,31 @@ namespace CS2048
                 }
             }
             return -1;
+        }
+        public Board[] GetRotatedBoards()
+        {
+            Board[] result = new Board[4];
+
+            ushort[] rows = new ushort[4];
+            ushort[] reverseRows = new ushort[4];
+            ushort[] oRows = new ushort[4];
+            ushort[] oReverseRows = new ushort[4];
+
+            for (int i = 0; i < 4; i++)
+            {
+                rows[i] = Board.GetRow(blocks, i);
+                oRows[3 - i] = rows[i];
+                reverseRows[i] = Board.ReverseRow(rows[i]);
+                oReverseRows[3 - i] = reverseRows[i];
+            }
+
+            result[0] = new Board(blocks);
+            result[1] = new Board(Board.SetRows(oReverseRows));
+            result[2] = new Board(Board.SetColumns(reverseRows));
+            result[3] = new Board(Board.SetColumns(oRows));
+
+
+            return result;
         }
     }
 }

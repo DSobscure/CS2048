@@ -10,18 +10,18 @@ namespace CS2048
     public class DictionaryFeature : Feature
     {
         [JsonProperty("dictionaryTuple")]
-        public Dictionary<int, double> dictionaryTuple;
+        public Dictionary<int, float> dictionaryTuple;
         [JsonProperty("index")]
         public int index;
         [JsonConstructor]
-        public DictionaryFeature(int index, Dictionary<int, double> dictionaryTuple)
+        public DictionaryFeature(int index, Dictionary<int, float> dictionaryTuple)
         {
             this.index = index;
             this.dictionaryTuple = dictionaryTuple;
         }
         public DictionaryFeature(int index)
         {
-            dictionaryTuple = new Dictionary<int, double>();
+            dictionaryTuple = new Dictionary<int, float>();
             this.index = index;
         }
 
@@ -99,13 +99,13 @@ namespace CS2048
                     return 0;
             }
         }
-        public override double GetScore(ulong blocks)
+        public override float GetScore(ulong blocks)
         {
-            double sum = 0;
+            float sum = 0;
             for (int i = 0; i < 4; i++)
             {
-                int index = GetIndex(rotateBoards[i]);
-                int symmetricIndex = GetIndex(GetMirrorSymmetricBoard(rotateBoards[i]));
+                int index = (int)GetIndex(rotateBoards[i]);
+                int symmetricIndex = (int)GetIndex(GetMirrorSymmetricBoard(rotateBoards[i]));
                 if(dictionaryTuple.ContainsKey(index))
                     sum += dictionaryTuple[index];
                 if (/*symmetricIndex != index &&*/ dictionaryTuple.ContainsKey(symmetricIndex))
@@ -113,12 +113,12 @@ namespace CS2048
             }
             return sum;
         }
-        public override void UpdateScore(ulong blocks, double delta)
+        public override void UpdateScore(ulong blocks, float delta)
         {
             for (int i = 0; i < 4; i++)
             {
-                int index = GetIndex(rotateBoards[i]);
-                int symmetricIndex = GetIndex(GetMirrorSymmetricBoard(rotateBoards[i]));
+                int index = (int)GetIndex(rotateBoards[i]);
+                int symmetricIndex = (int)GetIndex(GetMirrorSymmetricBoard(rotateBoards[i]));
                 if (dictionaryTuple.ContainsKey(index))
                     dictionaryTuple[index] += delta;
                 else
