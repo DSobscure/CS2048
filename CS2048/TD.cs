@@ -88,25 +88,26 @@ namespace CS2048
             }
             if(!useMLP)
             {
-                before = 0;
                 double errorCount = 0;
-                for (int i = 0; i < traningData.Count; i++)
+                //do
                 {
-                    double error;
-                    if (MLP2048AI.GetDirection(traningData[i].Item1) != traningData[i].Item2)
+                    errorCount = 0;
+                    for (int i = 0; i < traningData.Count; i++)
                     {
-                        MLP2048AI.Train(traningData[i].Item1, traningData[i].Item2, out error);
-                    }
-                    preprebefore = prebefore;
-                    prebefore = before;
-                    before = traningData[i].Item1.blocks;
+                        double error;
+                        if (MLP2048AI.GetDirection(traningData[i].Item1) != traningData[i].Item2)
+                        {
+                            MLP2048AI.Train(traningData[i].Item1, traningData[i].Item2, out error);
+                        }
 
-                    //if (MLP2048AI.GetDirection(traningData[i].Item1) != traningData[i].Item2)
-                    //{
-                    //    errorCount += 1; ;
-                    //}
+                        if (MLP2048AI.GetDirection(traningData[i].Item1) != traningData[i].Item2)
+                        {
+                            errorCount += 1; ;
+                        }
+                    }
+                    Console.WriteLine("Error rate: {0}", errorCount / traningData.Count);
                 }
-                //Console.WriteLine("Error rate: {0}", errorCount / traningData.Count);
+                //while (errorCount / traningData.Count > 0.01);
                 //Console.WriteLine("Error: {0}", totalError / traningData.Count);
                 //while (errorCount / traningData.Count > 0.1)
                 //{

@@ -54,6 +54,7 @@
     <Compile Include="FourTupleFeature.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="MLP2048AI.cs" />
+    <Compile Include="MLPBoardTest.cs" />
     <Compile Include="NeuralNetworkLibrary\MultiLayerPerceptron.cs" />
     <Compile Include="SevenTupleFeature.cs" />
     <Compile Include="SixTupleFeature.cs" />

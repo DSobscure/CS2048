@@ -10,8 +10,9 @@ namespace CS2048
     {
         static void Main(string[] args)
         {
-            TDLearningAgent agent = new TDLearningAgent();
-            agent.Training(10000);
+            //TDLearningAgent agent = new TDLearningAgent();
+            //agent.Training(10000);
+            MLPBoardTest.Run();
             Console.Read();
         }
     }
